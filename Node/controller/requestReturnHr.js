@@ -13,15 +13,14 @@ const requestHr = async function(req,res){
     try {
         const itemName = req.body.itemName
         const reason = req.body.reason
-        const hr = await employeeModel.findOne({isHr : true})
-        const 
+        const hr = await employeeModel.findOne({isHr : true}) 
         if(!hr){
             return console.log();
             }
             console.log(hr._id);
             const request = new requestModel({
                 employeeId : hr._id,
-                itemId: new ObjectID(),
+                hrId: hr._id,
                 itemName,
                 reason,
                 requestTime: Date.now(),
@@ -30,17 +29,37 @@ const requestHr = async function(req,res){
                 serialNumber: 9 ,
             }
         )
-        console.log("HIiii");
         const result = await request.save()
-        console.log(result);
         res.status(200).send({isError:false,result})
     } catch (error) {
         res.status(400).send({isError : true,result: error})
     }    
 }
 
-const returnHr = function(){
-    
+const returnHr =async function(req,res){
+    try {
+
+        const { itemName, reason, condition, companyName } = req.body
+        const hr = await employeeModel.findOne({isHr : true}) 
+        if(!hr){
+            return console.log();
+            }
+        console.log(hr._id);
+        const returnItem = new returnModel({
+            employeeId : hr._id,
+            itemName,
+            companyName,
+            reason,
+            condition,
+            returnTime: Date.now(),
+            serialNumber: 9 ,
+        }
+    )
+        const result = await returnItem.save()
+        res.status(200).send({isError:false,result})
+    } catch (error) {
+        res.status(400).send({isError: true, result: error})
+    }
 }
-// requestHr()
+
 module.exports = {requestHr,returnHr}

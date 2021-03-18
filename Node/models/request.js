@@ -6,12 +6,6 @@ const reqSchema = new mongoose.Schema({
         //required: true,
         ref: "Employee" //modelname
     },
-    itemId:{
-
-        type: mongoose.Schema.Types.ObjectId,
-        //required: true,
-        ref: "Employee" //modelname
-    },
     itemName:{
         type: String,
         required:true
@@ -37,6 +31,9 @@ const reqSchema = new mongoose.Schema({
     },
     serialNumber:{
         type: Number
+    },
+    hrId:{
+        type: mongoose.Schema.Types.ObjectId
     }
 })
 
