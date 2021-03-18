@@ -1,4 +1,3 @@
-const { response } = require("express");
 const bcrypt = require("bcryptjs"); 
 
 const Employee = require("../models/Employee.js");
@@ -25,12 +24,12 @@ const login = async (req,res) => {
         const employee = await Employee.findOne({email});
         if(!employee)
         {
-           return response.status(404).send({isError: true, result : "Unable to login"});
+           return res.status(404).send({isError: true, result : "Unable to login"});
         }
         const password_matched = await bcrypt.compare(password,employee.password);
         if(!password_matched)
         {
-            return response.status(404).send({isError: true, result : "Unable to login"});
+            return res.status(404).send({isError: true, result : "Unable to login"});
         }
         const encryptedToken = await employee.generateAuthToken();
         res.status(200).send({isError : false , result : {employee,encryptedToken}});
