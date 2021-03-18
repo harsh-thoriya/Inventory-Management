@@ -26,7 +26,7 @@ const reqSchema = new mongoose.Schema({
         
         //required: true
     },
-    requestClosetime : {
+    requestCloseTime : {
         type:Date,
        // required: true
     },

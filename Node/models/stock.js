@@ -1,21 +1,21 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-    iteamName:{
+    itemName:{
         type: String,
-        require: true
+        required: true
     },
     companyName:{
         type: String,
-        require: true
+        required: true
     },
     availableQuantity:{
         type: Number,
-        require: true   
+        required: true   
     },
     equippedQuantity:{
         type: Number,
-        require: true
+        default: 0
     }
 });
 
