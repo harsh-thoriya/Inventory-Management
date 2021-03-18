@@ -3,5 +3,9 @@ const { Error } = require('mongoose')
 
 const router = new express.Router()
 
-router.post('/dashboard',hrDashboard())
+router.get('/dashboard',hrDashboard())
 router.post('/addInventory',addInventory())
+router.post('/requestHr',requestHr())
+router.post('/returnHr',returnHr())
+router.get('/approval',approvalGet())
+router.post('/approval',approval())
