@@ -1,6 +1,11 @@
 const bcrypt = require("bcryptjs"); 
-
 const Employee = require("../models/Employee.js");
+const sendEmail = require('../utils/sendEmail.js');
+const jwt = require("jsonwebtoken");
+const Cryptr = require('cryptr');
+const cryptr = new Cryptr(process.env.CRYPTR);
+require('dotenv').config({path : "../.env"});
+
 
 const employeeSignup = async (req , res) => {
     
@@ -76,4 +81,90 @@ const logoutAll = async (req,res) => {
     }
 }
 
-module.exports = {employeeSignup , login , logout , logoutAll };
+const forgotPassword = async (req,res) => {
+    
+    try{
+        const email = req.body.email;
+        const employee = await Employee.findOne({ email });
+        if(!employee)
+        {
+            throw new Error('User not registered');
+        }
+        employee.tokens = [];
+        await employee.save();
+
+
+        const token = jwt.sign({_id : employee._id.toString() } , process.env.JWTKEY , {expiresIn: '10m'});
+
+        const encryptedToken = cryptr.encrypt(token);
+
+        employee.tokens = employee.tokens.concat({token : encryptedToken})
+
+        await employee.save();
+        
+        
+        const link = 'http://localhost:'+process.env.PORT+'/resetPassword/'+encryptedToken;
+        await sendEmail(email,link);
+        res.status(200).send({isError : false, result : "Email sent"});
+        
+          
+    }
+    catch(e)
+    {
+        res.status(404).send({isError : true , result : e});
+    }
+
+
+}
+
+const resetPasswordEmail = async (req,res) => {
+    try{
+        const password = req.body.password;
+        const confirm_password = req.body.confirmPassword;
+        if(password !== confirm_password)
+        {
+            throw new Error("Password does not match")
+        }
+        
+        const token = cryptr.decrypt(req.params.token);
+        //console.log(req.params.token);
+        const payload = jwt.verify(token,process.env.JWTKEY);
+        
+        const employee = await Employee.findOne({ _id :payload._id , 'tokens.token' : req.params.token})
+        if(!employee)
+        {
+            throw new Error("Not authenticate user");
+        }
+        employee.password = password;
+        await employee.save();
+        return res.status(200).send({isError:false , result : "Password reset successful"})
+
+    }
+    catch(e)
+    {
+        return res.status(500).send({isError:true , result : e})
+    }
+}
+
+const resetPassword = async (req,res) => {
+    try{
+        const employee = req.employee;
+        const password = req.body.password;
+        const confirm_password = req.body.confirmPassword;
+        if(password !== confirm_password)
+        {
+            throw new Error("Password does not match")
+        }
+        employee.password = password;
+        employee.tokens = [];
+        await employee.save();
+        return res.status(200).send({isError:false , result : "Password reset successful"})
+    }
+    catch(e)
+    {
+        return res.status(500).send({isError:true , result : e})
+    }
+
+}
+
+module.exports = {employeeSignup , login , logout , logoutAll , forgotPassword , resetPassword , resetPasswordEmail};
