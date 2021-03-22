@@ -28,8 +28,6 @@ const requestHr = async (req,res,next) => {
         let companyName = stockItem.companyName
         let itemObjectId 
         let itemArray = await itemModel.findOne({itemName,'items.companyName':companyName})
-
-        
        
         for(let i=0;i<itemArray.items.length;i++){
             
@@ -88,35 +86,63 @@ const returnHr = async (req,res,next) => {
     const employeeId = req.body.employeeId
     const condition = req.body.condition
     const reason = req.body.reason
-
-    const stockUpdate = await stockModel.updateOne({$and :[{itemName},{companyName}]},{
-        $inc : { 
-            availableQuantity : 1,
-            equippedQuantity : -1
-        }
-    })
-
-    const itemUpdate = await itemModel.updateOne(
-        { itemName: itemName, items: { $elemMatch: { companyName , itemId:serialNumber } } },
-        {
-            $set: {
-                "items.$.employeeId": undefined,
-                "items.$.issuedDate": undefined
+    if(condition){
+        const stockUpdate = await stockModel.updateOne({$and :[{itemName},{companyName}]},{
+            $inc : { 
+                availableQuantity : 1,
+                equippedQuantity : -1
             }
-        }
-    )
+        })
     
-    const returnItem = await new returnModel({
-        employeeId,
-        itemName,
-        companyName,
-        reason,
-        returnTime : Date.now(),
-        condition,
-        serialNumber
-    }).save()
+        const itemUpdate = await itemModel.updateOne(
+            { itemName: itemName, items: { $elemMatch: { companyName , itemId:serialNumber } } },
+            {
+                $set: {
+                    "items.$.employeeId": undefined,
+                    "items.$.issuedDate": undefined
+                }
+            }
+        )
+        
+        const returnItem = await new returnModel({
+            employeeId,
+            itemName,
+            companyName,
+            reason,
+            returnTime : Date.now(),
+            condition,
+            serialNumber
+        }).save()
+    
+        return res.send({isError:false,result:"successfulll"})
+    }
+    else{
 
-    return res.send({isError:false,result:"successfulll"})
+        const stockUpdate = await stockModel.updateOne({$and :[{itemName},{companyName}]},{
+            $inc : { 
+                equippedQuantity : -1
+            }
+        })
+    
+        const itemDelete = await itemModel.updateOne({itemName},
+            { $pull: { items: { itemId:serialNumber, companyName } } } 
+        )
+
+        console.log(itemDelete)
+        
+        const returnItem = await new returnModel({
+            employeeId,
+            itemName,
+            companyName,
+            reason,
+            returnTime : Date.now(),
+            condition,
+            serialNumber
+        }).save()
+        
+        return res.send({isError:false,result:"successfully item deleted"})
+    }
+    
 }
 
 module.exports = {requestHr,returnHr}
