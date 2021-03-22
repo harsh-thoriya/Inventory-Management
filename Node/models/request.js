@@ -32,7 +32,6 @@ const reqSchema = new mongoose.Schema({
         type: Number
     },
     hrId:{
-<<<<<<< HEAD
         type:mongoose.Schema.Types.ObjectId
     },
     companyName:{
@@ -40,9 +39,6 @@ const reqSchema = new mongoose.Schema({
     },
     itemObjectId:{
         type:mongoose.Schema.Types.ObjectId
-=======
-        type: mongoose.Schema.Types.ObjectId
->>>>>>> 13a57f0696565125739704186c5d82a162aabc24
     }
 })
 

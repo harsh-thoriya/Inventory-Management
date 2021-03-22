@@ -1,7 +1,5 @@
 const stockModel = require('../models/stock.js')
 const requestModel = require('../models/request.js')
-const returnModel = require('../models/return.js')
-const employeeModel = require('../models/employee.js')
 const itemModel = require('../models/item.js')
 const ObjectId = require('mongodb').ObjectID;
 
@@ -10,8 +8,8 @@ const requestApproval = async (req,res,next) => {
 
     console.log(req.body) //employeeId, itemName
     const itemName = req.body.itemName
-    const hrId = req.body.hrId
-    const employeeId = req.body.hrId
+    const hrId = req.body.employeeId
+    const employeeId = req.body.employeeId
     const requestObjectId = req.body.requestObjectId
 
     let serialNumber,requestCloseTime
@@ -31,8 +29,6 @@ const requestApproval = async (req,res,next) => {
         let companyName = stockItem.companyName
         let itemObjectId 
         let itemArray = await itemModel.findOne({itemName,'items.companyName':companyName})
-
-        
        
         for(let i=0;i<itemArray.items.length;i++){
             

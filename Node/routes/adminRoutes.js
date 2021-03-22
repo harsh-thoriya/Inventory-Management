@@ -2,7 +2,7 @@ const express = require('express')
 const { Error } = require('mongoose')
 const addInventory = require('../controller/addInventory.js')
 const approval = require('../controller/requestApproval.js')
-const {requestHr, returnHr} = require('../controller/requestReturnHr')
+const {requestHr, returnHr} = require('../controller/hrRequestReturn.js')
 
 const router = new express.Router()
 
