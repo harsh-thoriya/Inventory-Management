@@ -57,7 +57,7 @@ const requestHr = async (req,res,next) => {
                 hrId,
                 companyName,
                 itemObjectId
-            }) 
+            }).save() 
 
         return res.send({isError:false,result:{
             employeeId:hrId,
@@ -85,6 +85,9 @@ const returnHr = async (req,res,next) => {
     const itemName = req.body.itemName
     const companyName = req.body.companyName
     const serialNumber = req.body.serialNumber
+    const employeeId = req.body.employeeId
+    const condition = req.body.condition
+    const reason = req.body.reason
 
     const stockUpdate = await stockModel.updateOne({$and :[{itemName},{companyName}]},{
         $inc : { 
@@ -103,6 +106,16 @@ const returnHr = async (req,res,next) => {
         }
     )
     
+    const returnItem = await new returnModel({
+        employeeId,
+        itemName,
+        companyName,
+        reason,
+        returnTime : Date.now(),
+        condition,
+        serialNumber
+    }).save()
+
     return res.send({isError:false,result:"successfulll"})
 }
 
