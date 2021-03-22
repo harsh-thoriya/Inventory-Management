@@ -19,6 +19,8 @@ const userSchema = new mongoose.Schema({
     }
 });
 
+userSchema.index({"itemName":1,"companyName":1},{unique:true})
+
 const Stock = mongoose.model('stock', userSchema);
 
 

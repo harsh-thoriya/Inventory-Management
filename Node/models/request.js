@@ -9,7 +9,6 @@ const reqSchema = new mongoose.Schema({
     itemName:{
         type: String,
         required:true
-       
     },
     reason:{
         type: String,
@@ -33,7 +32,13 @@ const reqSchema = new mongoose.Schema({
         type: Number
     },
     hrId:{
-        type: mongoose.Schema.Types.ObjectId
+        type:mongoose.Schema.Types.ObjectId
+    },
+    companyName:{
+        type:String
+    },
+    itemObjectId:{
+        type:mongoose.Schema.Types.ObjectId
     }
 })
 
