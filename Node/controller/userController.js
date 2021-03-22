@@ -3,6 +3,7 @@ const Employee = require("../models/Employee.js");
 const sendEmail = require('../utils/sendEmail.js');
 const jwt = require("jsonwebtoken");
 const Cryptr = require('cryptr');
+const { request } = require("express");
 const cryptr = new Cryptr(process.env.CRYPTR);
 require('dotenv').config({path : "../.env"});
 
@@ -88,7 +89,7 @@ const forgotPassword = async (req,res) => {
         const employee = await Employee.findOne({ email });
         if(!employee)
         {
-            throw new Error('User not registered');
+            throw 'User not registered';
         }
         employee.tokens = [];
         await employee.save();
@@ -123,7 +124,7 @@ const resetPasswordEmail = async (req,res) => {
         const confirm_password = req.body.confirmPassword;
         if(password !== confirm_password)
         {
-            throw new Error("Password does not match")
+            throw "Password does not match";
         }
         
         const token = cryptr.decrypt(req.params.token);
@@ -133,7 +134,7 @@ const resetPasswordEmail = async (req,res) => {
         const employee = await Employee.findOne({ _id :payload._id , 'tokens.token' : req.params.token})
         if(!employee)
         {
-            throw new Error("Not authenticate user");
+            throw "Not authenticate user";
         }
         employee.password = password;
         await employee.save();
@@ -153,7 +154,7 @@ const resetPassword = async (req,res) => {
         const confirm_password = req.body.confirmPassword;
         if(password !== confirm_password)
         {
-            throw new Error("Password does not match")
+            throw "Password does not match";
         }
         employee.password = password;
         employee.tokens = [];
@@ -167,4 +168,37 @@ const resetPassword = async (req,res) => {
 
 }
 
-module.exports = {employeeSignup , login , logout , logoutAll , forgotPassword , resetPassword , resetPasswordEmail};
+const getProfile = async (req,res) => {
+    try{
+        const employee = req.employee;
+        res.status(200).send({isError : false , result : employee})
+    }
+    catch(e)
+    {
+        res.status(404).send({isError : true , result : e})
+    }
+}
+
+const updateProfile = async (req,res) => {
+    try{
+        const employee = req.employee;
+        const allowedUpdates = ['firstName','lastName','contactNumber'];
+        const requestedChanges = Object.keys(req.body);
+        const isValidOperation = requestedChanges.every((element) => allowedUpdates.includes(element));
+        if(!isValidOperation)
+        {
+            throw "Not a valid update";
+        }
+        requestedChanges.forEach((element) => {
+            employee[element] = req.body[element];
+        });
+        await employee.save();
+        res.status(200).send(employee);
+    }
+    catch(e)
+    {
+        res.status(404).send(e);
+    }
+}
+
+module.exports = {employeeSignup , login , logout , logoutAll , forgotPassword , resetPassword , resetPasswordEmail , getProfile , updateProfile};
