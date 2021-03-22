@@ -1,58 +1,63 @@
 const stockModel = require('../models/stock.js')
-const requestModel = require('../models/request.js')
-const returnModel = require('../models/return.js')
-const employeeModel = require('../models/employee.js')
-const itemSchema = require('../models/item.js')
-const mongoose = require('mongoose')
+const itemModel = require('../models/item.js')
 
 const addStock = async (req,res,next) => {
-    console.log(req.body)
+
     let stockData = req.body
-    const stockItem = new stockModel(stockData)
-    await stockItem.save()
-
     const itemName = req.body.itemName
+    const companyName = req.body.companyName
+    try{
+        var stockItem = await stockModel.find({$and :[{itemName},{companyName}]})
 
-    let itemModel = mongoose.model('item',itemSchema)
+        if(stockItem.length>0){
 
-    let findField = await itemModel.find({[itemName]:{ '$exists' : true }})
-
-    if ( findField.length > 0 ){
-        let itemNameId = itemName+'Id'
-        itemSchema.add({[itemName]:[{
-            [itemNameId]:Number,
-            issuedDate : Date,
-            companyName : String,
-            employeeId : mongoose.Schema.Types.ObjectId
-        }]})
-        itemModel = mongoose.model('item',itemSchema)
-        //let fieldItemArray = Array.from(findField.keys())
-        console.log(findField[0])
-        
-        let item = {[itemNameId]:1,companyName:stockData.companyName} 
-        let updateData = await itemModel.updateOne({_id:findField[0]._doc._id},{ $push: { [itemName]: item } })
-    }
-    else{
-        console.log("inside else, field not found in db")
-        let itemNameId = itemName+'Id'
-        itemSchema.add({[itemName]:[{
-            [itemNameId]:Number,
-            issuedDate : Date,
-            companyName : String,
-            employeeId : mongoose.Schema.Types.ObjectId
-        }]})
-        itemModel = mongoose.model('item',itemSchema)
-        let itemArray = []
-        for(let i=1;i<=stockData.availableQuantity;i++){
-            itemArray.push({[itemNameId]:i,companyName:stockData.companyName})
+            stockItem[0]._doc.availableQuantity = stockItem[0]._doc.availableQuantity+req.body.availableQuantity
+            await stockModel.updateOne({itemName,companyName},{'availableQuantity': stockItem[0]._doc.availableQuantity})
+            
+            let itemArray = []
+            for(let i=stockItem[0]._doc.availableQuantity+stockItem[0]._doc.equippedQuantity-stockData.availableQuantity+1;i<=stockItem[0]._doc.availableQuantity+stockItem[0]._doc.equippedQuantity;i++){
+                itemArray.push({itemId:i,companyName:stockData.companyName})
+            }
+            let updateData = await itemModel.updateOne({itemName},{ $push: { items: { "$each": itemArray } } })
+            return res.send("successfully saved")
         }
+        else{
 
-        await new itemModel({[itemName]:itemArray}).save()
+            const stockItem = await new stockModel(stockData).save()
+            let item = await itemModel.find({itemName})
+            if(item.length>0){
+
+                let itemArray = []
+                for(let i=1;i<=stockData.availableQuantity;i++){
+                    itemArray.push({itemId:i,companyName:stockData.companyName})
+                }
+                let updateData = await itemModel.updateOne({itemName},{ $push: { items: { "$each": itemArray } } })
+
+            }
+            else{
+
+                let itemArray = []
+                for(let i=1;i<=stockData.availableQuantity;i++){
+                    itemArray.push({itemId:i,companyName:stockData.companyName})
+                }
+                await new itemModel({
+                    itemName:itemName,
+                    items:itemArray
+                }).save()
+
+            }
+
+            return res.send({isError:false,result:"successfull"})
+
+        }
         
     }
+    catch(e){
 
+        res.send({isError:true,result:e})
 
-    res.send("added to stock")
+    }
+
 }
 
 module.exports = {addStock}
