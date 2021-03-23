@@ -16,6 +16,10 @@ const userSchema = new mongoose.Schema({
     equippedQuantity:{
         type: Number,
         default: 0
+    },
+    garbageQuantity:{
+        type: Number,
+        default:0
     }
 });
 
