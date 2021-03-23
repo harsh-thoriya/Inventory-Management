@@ -1,17 +1,43 @@
-const express = require('express')
-require('./db-connect')
-const adminRoutes = require('./routes/adminRoutes.js')
-const port = process.env.PORT
 
-const app = express()
-app.listen(port , (err)=>{
-    if(err){
-        console.log("error")
-    }
-    else{
-        console.log("successful to", port)
+require("./db-connect.js");
+const express = require('express');
+const multer = require('multer');
+const adminRoutes = require('./routes/adminRoutes.js')
+const employeeRoutes = require("./routes/employee.js");
+
+
+
+const app = express();
+const port = process.env.PORT;
+app.use(express.json());
+
+
+const storage = multer.memoryStorage({
+    destination: function(req, file, callback) {
+        callback(null, '')
     }
 })
-app.use(express.json());
+  
+const filefilter = (req,file,callback)=>{
+  if(file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg'){
+    callback(null,true)
+  }
+  else{
+    callback(null,false)
+  }
+}
+
+
+app.use(multer({storage , filefilter }).single('profilePic'));
+
+
+app.use(employeeRoutes);
 app.use('/dashboard',adminRoutes)
-// require('./controller/requestReturnHr')
+
+
+app.listen(port,() => {
+    console.log("Server Established");
+});
+
+
+
