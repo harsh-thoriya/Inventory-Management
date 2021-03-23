@@ -1,6 +1,11 @@
 require("./db-connect.js");
 const express = require('express');
 const multer = require('multer');
+const adminRoutes = require('./routes/adminRoutes.js')
+const employeeRoutes = require("./routes/employee.js");
+
+
+
 const app = express();
 const port = process.env.PORT;
 app.use(express.json());
@@ -24,9 +29,10 @@ const filefilter = (req,file,callback)=>{
 
 app.use(multer({storage , filefilter }).single('profilePic'));
 
-const employeeRoutes = require("./routes/employee.js");
 
 app.use(employeeRoutes);
+app.use('/dashboard',adminRoutes)
+
 
 app.listen(port,() => {
     console.log("Server Established");
