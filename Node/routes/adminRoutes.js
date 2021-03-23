@@ -10,6 +10,7 @@ const router = new express.Router()
 router.post('/addInventory',addInventory.addStock)
 router.post('/requestHr',requestHr)
 router.post('/returnHr',returnHr)
+
 //router.get('/approval',approvalGet())
 router.post('/approval',approval.requestApproval)
 router.post('/rejection',approval.requestRejection)
