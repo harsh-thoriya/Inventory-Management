@@ -1,25 +1,38 @@
 const bcrypt = require("bcryptjs"); 
 const Employee = require("../models/Employee.js");
 const sendEmail = require('../utils/sendEmail.js');
+const uploadPic = require('../utils/profilePicUpload.js')
+
 const jwt = require("jsonwebtoken");
 const Cryptr = require('cryptr');
-const { request } = require("express");
+const AWS = require('aws-sdk');
+
 const cryptr = new Cryptr(process.env.CRYPTR);
 require('dotenv').config({path : "../.env"});
 
 
-const employeeSignup = async (req , res) => {
+const employeeSignup = async (req , res ) => {
     
     try
-    {
+    {   
         const employee = Employee(req.body);
         const result = await employee.save();
+        //const result = '';
+        console.log(req.body);
+
+        if(req.body.uploadPic)
+        {
+            await uploadPic(req,res,employee);
+        }
+        else{
         return res.status(201).send({isError: false, result});    
+        }
+        
     }
     catch(e)
     {
         //console.log(e);
-        return res.status(404).send({isError: true, result :e});
+        return res.status(404).send({isError: true, result : e});
     }
 }
 

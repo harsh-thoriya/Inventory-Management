@@ -4,7 +4,7 @@ const auth = require('../middleware/auth.js');
 const router = express.Router();
 
 
-router.post("/signup" , employeeSignup );
+router.post("/signup" , employeeSignup);
 router.post("/login", login);
 router.get("/logout" , auth , logout);
 router.get("/logoutAll", auth ,logoutAll);
@@ -13,6 +13,7 @@ router.post("/resetPassword", auth , resetPassword);
 router.post("/resetPassword/:token" , resetPasswordEmail);
 router.get("/profile", auth, getProfile);
 router.post("/profile" , auth , updateProfile);
+
 
 
 // router.get('/checklogin', auth , async (req,res) => {
