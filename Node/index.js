@@ -1,7 +1,6 @@
 const express = require('express')
 require('./db-connect')
 const adminRoutes = require('./routes/adminRoutes.js')
-const bodyParser = require('body-parser')
 const port = process.env.PORT
 
 const app = express()
