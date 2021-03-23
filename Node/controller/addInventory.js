@@ -6,33 +6,43 @@ const addStock = async (req,res,next) => {
     let stockData = req.body
     const itemName = req.body.itemName
     const companyName = req.body.companyName
+    const incomingQuantity = req.body.incomingQuantity
     try{
         var stockItem = await stockModel.find({$and :[{itemName},{companyName}]})
 
         if(stockItem.length>0){
 
-            stockItem[0]._doc.availableQuantity = stockItem[0]._doc.availableQuantity+req.body.availableQuantity
-            await stockModel.updateOne({itemName,companyName},{'availableQuantity': stockItem[0]._doc.availableQuantity})
+            
             let itemId = stockItem[0]._doc.availableQuantity+stockItem[0]._doc.equippedQuantity+stockItem[0]._doc.garbageQuantity+1
-            await new itemModel({
-                itemName,
-                itemId : itemId,
-                companyName
-            }).save()
+            stockItem[0]._doc.availableQuantity = stockItem[0]._doc.availableQuantity + incomingQuantity
+            await stockModel.updateOne({itemName,companyName},{'availableQuantity': stockItem[0]._doc.availableQuantity})
+            //await new itemModel({
+            //    itemName,
+            //    itemId,
+            //    companyName
+            //}).save()
 
-            // let itemArray = []
-            // for(let i=stockItem[0]._doc.availableQuantity+stockItem[0]._doc.equippedQuantity-stockData.availableQuantity+1;i<=stockItem[0]._doc.availableQuantity+stockItem[0]._doc.equippedQuantity;i++){
-            //     itemArray.push({itemId:i,companyName:stockData.companyName})
-            // }
-            // let updateData = await itemModel.updateOne({itemName},{ $push: { items: { "$each": itemArray } } })
-
-
+            //let itemArray = []
+            let loopCount = stockItem[0]._doc.availableQuantity
+                        
+            for(let i=itemId;i<=loopCount;i++){
+                await new itemModel({itemId:i,itemName,companyName}).save()
+            }
+            //let updateData = await itemModel.updateOne({itemName},{ $push: { items: { "$each": itemArray } } })
 
             return res.send("successfully saved")
         }
         else{
 
-            const stockItem = await new stockModel(stockData).save()
+            const stockItem = await new stockModel({
+                itemName,
+                companyName,
+                availableQuantity:incomingQuantity
+            }).save()
+
+            for(let i=1;i<=incomingQuantity;i++){
+                await new itemModel({itemId:i,itemName,companyName}).save()
+            }
 
             //let item = await itemModel.find({itemName})
             // if(item.length>0){
@@ -63,7 +73,7 @@ const addStock = async (req,res,next) => {
         
     }
     catch(e){
-
+        console.log(e)
         res.send({isError:true,result:e})
 
     }
