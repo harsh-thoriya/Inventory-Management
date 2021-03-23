@@ -71,6 +71,17 @@ const employeeSchema = new mongoose.Schema({
             }
 });
 
+employeeSchema.methods.toJSON = function () {
+    const employee =this
+    const employeeObject = employee.toObject()
+
+    delete employeeObject.password
+    delete employeeObject.tokens
+    //delete employeeObject.avatar
+    return employeeObject
+}
+
+
 employeeSchema.methods.generateAuthToken = async function () {
     
     const employee = this;

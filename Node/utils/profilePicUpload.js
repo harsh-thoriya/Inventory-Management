@@ -1,5 +1,5 @@
 const AWS = require('aws-sdk');
-const Employee = require("../models/Employee.js");
+const employee = require("../models/employee.js");
 require('dotenv').config();
 
 const uploadPic = async (req, res , employee)  => {

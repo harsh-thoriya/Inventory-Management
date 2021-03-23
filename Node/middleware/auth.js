@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const Employee = require("../models/Employee.js");
+const employee = require("../models/employee.js");
 const Cryptr = require('cryptr');
 const cryptr = new Cryptr(process.env.CRYPTR);
 
@@ -10,7 +10,7 @@ const auth = async (req,res,next) =>
         // console.log(encryptedToken);
         const token = cryptr.decrypt(encryptedToken);
         const tokenPayload =  jwt.verify(token,process.env.JWTKEY);
-        const employee = await Employee.findOne({_id : tokenPayload._id , 'tokens.token' : encryptedToken});
+        const employee = await employee.findOne({_id : tokenPayload._id , 'tokens.token' : encryptedToken});
 
         if(!employee)
         {

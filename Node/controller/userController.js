@@ -1,5 +1,5 @@
 const bcrypt = require("bcryptjs"); 
-const Employee = require("../models/Employee.js");
+const employee = require("../models/employee.js");
 const sendEmail = require('../utils/sendEmail.js');
 const uploadPic = require('../utils/profilePicUpload.js')
 
@@ -15,7 +15,7 @@ const employeeSignup = async (req , res ) => {
     
     try
     {   
-        const employee = Employee(req.body);
+        const employee = employee(req.body);
         const result = await employee.save();
         //const result = '';
         console.log(req.body);
@@ -40,7 +40,7 @@ const login = async (req,res) => {
 
     try{
         const { email , password } = req.body;
-        const employee = await Employee.findOne({email});
+        const employee = await employee.findOne({email});
         if(!employee)
         {
            return res.status(404).send({isError: true, result : "Unable to login"});
@@ -99,7 +99,7 @@ const forgotPassword = async (req,res) => {
     
     try{
         const email = req.body.email;
-        const employee = await Employee.findOne({ email });
+        const employee = await employee.findOne({ email });
         if(!employee)
         {
             throw 'User not registered';
@@ -144,7 +144,7 @@ const resetPasswordEmail = async (req,res) => {
         //console.log(req.params.token);
         const payload = jwt.verify(token,process.env.JWTKEY);
         
-        const employee = await Employee.findOne({ _id :payload._id , 'tokens.token' : req.params.token})
+        const employee = await employee.findOne({ _id :payload._id , 'tokens.token' : req.params.token})
         if(!employee)
         {
             throw "Not authenticate user";
