@@ -6,28 +6,34 @@ const retSchema = new mongoose.Schema({
         //required: true,
         ref: "Employee" //modelname
     },
-    itemName:{
-        type: String,
-        required:true
+    itemId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Item"
+
     },
-    companyName:{
+    itemName: {
+        type: String,
+        required: true
+    },
+    companyName: {
         type: String,
         //required: true
     },
-    reason:{
+    reason: {
         type: String,
-        required:true
+        required: true
     },
-    returnTime : {
-        type:Date,  
+    returnTime: {
+        type: Date,
         //required: true
     },
     condition: {
-        type:Boolean,
+        type: Boolean,
         required: true
     },
-    serialNumber:{
+    serialNumber: {
         type: Number,
+        ref: "Item"
         //required:true
     }
 })

@@ -6,33 +6,33 @@ const reqSchema = new mongoose.Schema({
         //required: true,
         ref: "Employee" //modelname
     },
-    itemId:{
+    itemId: {
         type: mongoose.Schema.Types.ObjectId,
         //required: true,
         ref: "Employee" //modelname
     },
-    itemName:{
+    itemName: {
         type: String,
-        required:true
+        required: true
     },
-    reason:{
+    reason: {
         type: String,
-        required:true
+        required: true
     },
-    requestTime : {
-        type:Date,
+    requestTime: {
+        type: Date,
         //required: true
     },
-    requestClosetime : {
-        type:Date,
-       // required: true
+    requestClosetime: {
+        type: Date,
+        // required: true
     },
-    status:{
-        default:0,
+    status: {
+        default: 0,
         //required: true,
-        type:Number
+        type: Number
     },
-    serialNumber:{
+    serialNumber: {
         type: Number
     }
 })
