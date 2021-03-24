@@ -3,7 +3,9 @@ const validator = require("validator");
 const bcrypt = require("bcryptjs"); 
 const jwt = require("jsonwebtoken");
 const Cryptr = require('cryptr');
-const cryptr = new Cryptr('inventoryMongo');
+const cryptr = new Cryptr(process.env.CRYPTR);
+
+//require('dotenv').config({path : "./.env"});
 
 const employeeSchema = new mongoose.Schema({
 
@@ -81,7 +83,6 @@ employeeSchema.methods.toJSON = function () {
     return employeeObject
 }
 
-
 employeeSchema.methods.generateAuthToken = async function () {
     
     const employee = this;
@@ -95,8 +96,9 @@ employeeSchema.methods.generateAuthToken = async function () {
 
     return encryptedToken;
    
-
 } 
+
+
 
 
 employeeSchema.pre('save' , async function (next) 
