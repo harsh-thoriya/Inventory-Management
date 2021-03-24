@@ -67,12 +67,12 @@ const requestHr = async (req,res,next) => {
             // return res.send({isError:false,})
         }
         else{
-            errorResponse(req,res,"Inventory empty for this request",400,'')
+            errorResponse(req,res,'',"Inventory empty for this request",400)
             // return res.send("Item not available, wait till it becomes available")
     
         }
     } catch (error) {
-        errorResponse(req,res,"Some error Occured",500,error)
+        errorResponse(req,res,error)
     }
 
 }
@@ -132,11 +132,11 @@ const returnHr = async (req,res,next) => {
                 condition,
                 itemId
             }).save()
-            successResponse(req,res,itemDelete,"Successfully Item Deleted")
+            successResponse(req,res,itemDelete,'Successfully Item Deleted')
             // return res.send({isError:false,result:"successfully item deleted"})
         }
     } catch (error) {
-        errorResponse(req,res,"Some error occured",500,error)
+        errorResponse(req,res,error)
     }
     
 }
