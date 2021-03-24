@@ -3,7 +3,6 @@ const express = require('express');
 const multer = require('multer');
 const adminRoutes = require('./routes/adminRoutes.js')
 const employeeRoutes = require("./routes/employee.js");
-require('dotenv').config();
 console.log(process.env.PORT);
 
 const app = express();

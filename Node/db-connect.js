@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-require('dotenv').config()
 
 async function dbConnect(){
     await mongoose.connect(process.env.MONGODBURL ,{useNewUrlParser:true,useFindAndModify:false, useCreateIndex:true, useUnifiedTopology:true}).then((resolved)=>{
