@@ -16,7 +16,7 @@ const sendEmail = async function (email,link) {
         from: process.env.EMAIL,
         to: email,
         subject: 'Reset password',
-        text: 'Kindly use this link to resest your password !' + link 
+        html: '<html><body><h3>Kindly use this link to resest your password !</h3><br><a href='+link+'>LINK</a></body></html>' 
       };
 
         transporter.sendMail(mailOptions, function(error, info){

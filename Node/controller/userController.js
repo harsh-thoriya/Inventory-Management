@@ -1,11 +1,11 @@
 const bcrypt = require("bcryptjs"); 
-const employee = require("../models/employee.js");
+const Employee = require("../models/employee.js");
 const sendEmail = require('../utils/sendEmail.js');
 const uploadPic = require('../utils/profilePicUpload.js')
-
 const jwt = require("jsonwebtoken");
 const Cryptr = require('cryptr');
 const AWS = require('aws-sdk');
+const { successResponse, errorResponse } = require("../utils/responseFormat.js");
 
 const cryptr = new Cryptr(process.env.CRYPTR);
 require('dotenv').config({path : "../.env"});
@@ -15,24 +15,24 @@ const employeeSignup = async (req , res ) => {
     
     try
     {   
-        const employee = employee(req.body);
+        const employee = Employee(req.body);
+        console.log(req.body);
         const result = await employee.save();
         //const result = '';
-        console.log(req.body);
 
         if(req.body.uploadPic)
         {
             await uploadPic(req,res,employee);
         }
         else{
-        return res.status(201).send({isError: false, result});    
+        return successResponse(req,res,result,"Employee registration successfull",201);  
         }
         
     }
     catch(e)
     {
         //console.log(e);
-        return res.status(404).send({isError: true, result : e});
+        return errorResponse(req,res,e);
     }
 }
 
@@ -40,24 +40,23 @@ const login = async (req,res) => {
 
     try{
         const { email , password } = req.body;
-        const employee = await employee.findOne({email});
+        const employee = await Employee.findOne({email});
         if(!employee)
         {
-           return res.status(404).send({isError: true, result : "Unable to login"});
+           return errorResponse(req,res,'','Unable to login',404)
         }
         const password_matched = await bcrypt.compare(password,employee.password);
         if(!password_matched)
         {
-            return res.status(404).send({isError: true, result : "Unable to login"});
+            return errorResponse(req,res,'','Unable to login',404)
         }
         const encryptedToken = await employee.generateAuthToken();
-        res.status(200).send({isError : false , result : {employee,encryptedToken}});
+        return successResponse(req,res, {employee,encryptedToken} , "Employee logged in !");
 
     }
     catch(e)
     {
-        res.status(404).send({isError : true , result : e });
-
+        return errorResponse(req,res,e)
     }
 
 }
@@ -71,12 +70,11 @@ const logout = async (req,res) => {
         });
 
         await employee.save();
-        res.status(200).send({isError:false, result: "User logged out"});
+        return successResponse(req,res,'','User logged out');     
     }
     catch(e)
     {
-        res.status(404).send({isError:true, result: e});
-
+        return errorResponse(req,res,e);
     }
 }
 
@@ -86,12 +84,12 @@ const logoutAll = async (req,res) => {
         const employee = req.employee;
         employee.tokens = [];
         await employee.save()
-        res.status(200).send({isError:false, result: "Logged out of all sessions"});
+        return successResponse(req,res,'','Logged out of all sessions');
+        
     }
     catch(e)
     {
-        res.status(404).send({isError:true, result: e});
-
+        return errorResponse(req,res,e)
     }
 }
 
@@ -99,7 +97,7 @@ const forgotPassword = async (req,res) => {
     
     try{
         const email = req.body.email;
-        const employee = await employee.findOne({ email });
+        const employee = await Employee.findOne({ email });
         if(!employee)
         {
             throw 'User not registered';
@@ -119,13 +117,12 @@ const forgotPassword = async (req,res) => {
         
         const link = 'http://localhost:'+process.env.PORT+'/resetPassword/'+encryptedToken;
         await sendEmail(email,link);
-        res.status(200).send({isError : false, result : "Email sent"});
-        
-          
+        return successResponse(req,res,'','Email sent');
+            
     }
     catch(e)
     {
-        res.status(404).send({isError : true , result : e});
+        return errorResponse(req,res,e);    
     }
 
 
@@ -143,20 +140,20 @@ const resetPasswordEmail = async (req,res) => {
         const token = cryptr.decrypt(req.params.token);
         //console.log(req.params.token);
         const payload = jwt.verify(token,process.env.JWTKEY);
-        
-        const employee = await employee.findOne({ _id :payload._id , 'tokens.token' : req.params.token})
+        const employee = await Employee.findOne({ _id :payload._id , 'tokens.token' : req.params.token})
         if(!employee)
         {
             throw "Not authenticate user";
         }
         employee.password = password;
+        employee.tokens = [];
         await employee.save();
-        return res.status(200).send({isError:false , result : "Password reset successful"})
+        return successResponse(req,res,'','Password reset successful');
 
     }
     catch(e)
     {
-        return res.status(500).send({isError:true , result : e})
+        return errorResponse(req,res,e);    
     }
 }
 
@@ -172,11 +169,11 @@ const resetPassword = async (req,res) => {
         employee.password = password;
         employee.tokens = [];
         await employee.save();
-        return res.status(200).send({isError:false , result : "Password reset successful"})
+        return successResponse(req,res,'','Password reset successful');
     }
     catch(e)
     {
-        return res.status(500).send({isError:true , result : e})
+        return errorResponse(req,res,e);    
     }
 
 }
@@ -184,11 +181,11 @@ const resetPassword = async (req,res) => {
 const getProfile = async (req,res) => {
     try{
         const employee = req.employee;
-        res.status(200).send({isError : false , result : employee})
+        return successResponse(req,res,employee,'Employee profile');
     }
     catch(e)
     {
-        res.status(404).send({isError : true , result : e})
+        return errorResponse(req,res,e);    
     }
 }
 
@@ -206,11 +203,11 @@ const updateProfile = async (req,res) => {
             employee[element] = req.body[element];
         });
         await employee.save();
-        res.status(200).send(employee);
+        return successResponse(req,res,employee,'Employee profile updated successfully');
     }
     catch(e)
     {
-        res.status(404).send(e);
+        return errorResponse(req,res,e);    
     }
 }
 
