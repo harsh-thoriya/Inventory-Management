@@ -1,5 +1,6 @@
 const AWS = require('aws-sdk');
 const employee = require("../models/employee.js");
+const { successResponse, errorResponse } = require('./responseFormat.js');
 require('dotenv').config();
 
 const uploadPic = async (req, res , employee)  => {
@@ -26,14 +27,15 @@ const uploadPic = async (req, res , employee)  => {
         S3.upload(params, async (err,data)=>{
             if(err){
                 console.log(err)
-                return res.send("Can not post picture , please try again with a different one ...")
+                return errorResponse(req,res,'','Cannot upload picture');
+                
             }
             else{
                 url = data.Location
                 console.log(url);  
                 employee.profilePicUrl = url;
                 await employee.save();
-                res.status(201).send({isError: false, result : employee});    
+                return successResponse(req,res,employee,'Employee registration successful',201);
             }
         })
     }

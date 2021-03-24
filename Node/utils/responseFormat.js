@@ -8,7 +8,7 @@ exports.successResponse = function (req, res, data, message = 'Operation success
     });
   };
   
-  exports.errorResponse = function (req, res, errorMessage, code = 500, error) {
+  exports.errorResponse = function (req, res, error, errorMessage = "Some error occured!", code = 500, ) {
     res.status(code);
     res.send({
       code,

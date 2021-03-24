@@ -1,5 +1,6 @@
 const stockModel = require('../models/stock.js')
 const itemModel = require('../models/item.js')
+const response = require('../utils/responseFormat.js')
 
 const addStock = async (req,res,next) => {
 
@@ -30,7 +31,8 @@ const addStock = async (req,res,next) => {
             }
             //let updateData = await itemModel.updateOne({itemName},{ $push: { items: { "$each": itemArray } } })
 
-            return res.send("successfully saved")
+            response.successResponse(req, res, data = null)
+
         }
         else{
 
@@ -67,14 +69,14 @@ const addStock = async (req,res,next) => {
 
             // }
 
-            return res.send({isError:false,result:"successfull"})
+            response.successResponse(req, res, data = null)
 
         }
         
     }
     catch(e){
-        console.log(e)
-        res.send({isError:true,result:e})
+
+        response.errorResponse(req, res, "error occurred while adding into inventory", code = 500, e)
 
     }
 

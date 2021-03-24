@@ -3,6 +3,7 @@ const express = require('express');
 const multer = require('multer');
 const adminRoutes = require('./routes/adminRoutes.js')
 const employeeRoutes = require("./routes/employee.js");
+console.log(process.env.PORT);
 
 const app = express();
 const port = process.env.PORT;
