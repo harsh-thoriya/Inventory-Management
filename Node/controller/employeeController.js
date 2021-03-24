@@ -4,7 +4,7 @@ const Request = require('../models/request')
 const Return = require('../models/return')
 const Stock = require('../models/stock')
 const Item = require('../models/item')
-const responseFormat = require("../utils/responseFormat")
+const response = require('../utils/responseFormat')
 //return item request
 module.exports.return_post = async (req, res) => {
     const employeeId = req.employee._id;
@@ -24,8 +24,8 @@ module.exports.return_post = async (req, res) => {
         serialNumber : serialNumber
     })
 
-    if(condition){
-      
+    if(condition=="1"){
+      console.log(condition)
         const stockUpdate = await Stock.findOneAndUpdate({itemName,companyName},{
             $inc : {
                 availableQuantity : 1,
@@ -38,12 +38,11 @@ module.exports.return_post = async (req, res) => {
         })
         try {
             await data.save()
-            res.send({ data, stockUpdate, itemUpdate })
-            //responseFormat.successResponse(req,res,data = { stockUpdate, itemUpdate})
+            //res.send({ data, stockUpdate, itemUpdate })
+            response.successResponse(req,res,{data,stockUpdate,itemUpdate})
         }
         catch (e) {
-            res.send(e)
-
+            response.errorResponse(req, res, e)
         }
     }
     else{
@@ -58,14 +57,11 @@ module.exports.return_post = async (req, res) => {
 
         try {
             await data.save()
-            //res.render('employee/return')
-            res.send({ data, stockUpdate, itemUpdate })
+            response.successResponse(req,res,{data,stockUpdate,itemDelete})
         }
         catch (e) {
-            res.send(e)
+            response.errorResponse(req, res, e)
         }
-
-        console.log(itemDelete)
     }
 
 }
@@ -75,8 +71,7 @@ module.exports.request_get = async (req, res) => {
     const pending_item = await Request.find({ employeeId: req.employee._id,status:0 })
     const equipped_item = await Request.find({employeeId: req.employee._id,status:1})
     const reject_item = await Request.find({employeeId: req.employee._id,status:2})
-    responseFormat.successResponse(req,res,data={pending_item,equipped_item,reject_item})
-    //res.send({pending_item,equipped_item,reject_item})
+    response.successResponse(req,res,{pending_item,equipped_item,reject_item})
 
 }
 
@@ -88,27 +83,25 @@ module.exports.request_post = async (req, res) => {
         reason: req.body.reason,
         requestTime: Date.now()
     })
-    console.log(data);
     try {
         await data.save()
-        res.send({ data })
+        response.successResponse(req,res,data,"Request added successfully")
     }
     catch (e) {
-        res.send(e)
+        response.errorResponse(req, res, e)
     }
 }
 
 //delete pending request
 module.exports.request_delete = async (req, res) => {
     const data = await Request.deleteOne({ employeeId: req.employee._id, status: 0 })
-    console.log(data)
     try {
 
-        await data.save()
-        res.send(data)
+        //await data.save()
+        response.successResponse(req,res,data,"Request delete successfully")
     }
     catch (e) {
-        res.send(e)
+        response.errorResponse(req, res, e)
     }
 }
 
@@ -120,10 +113,10 @@ module.exports.request_item = async (req, res) => {
     console.log(data)
     try {
         await data.save()
-        res.send(data)
+        response.successResponse(req,res,data)
     }
     catch (e) {
-        res.send(e)
+        response.errorResponse(req, res, e)
     }
 
 }
