@@ -12,8 +12,8 @@ module.exports.return_post = async (req, res) => {
     const reason = req.body.reason;
     const companyName = req.body.companyName;
     const condition = req.body.condition;
-    const serialNumber = req.body.itemId
-    //console.log(itemId)
+    const serialNumber = req.body.serialNumber
+    //console.log(serialNumber)
 
     const data = new Return({
         employeeId: employeeId,
@@ -21,7 +21,7 @@ module.exports.return_post = async (req, res) => {
         reason: reason,
         condition: condition,
         companyName: companyName,
-        serialNumber : serialNumber
+        serialNumber
     })
 
     if(condition=="1"){
@@ -32,7 +32,7 @@ module.exports.return_post = async (req, res) => {
                 equippedQuantity : -1
             }
         })
-        const itemUpdate = await Item.findOneAndUpdate({itemName,companyName,itemId:serialNumber},{
+        const itemUpdate = await Item.findOneAndUpdate({itemName,companyName,serialNumber},{
             employeeId : undefined,
             issuedDate : undefined
         })
@@ -53,7 +53,7 @@ module.exports.return_post = async (req, res) => {
             }
         })
 
-        const itemDelete = await Item.findOneAndDelete({itemName,itemId:serialNumber,companyName})
+        const itemDelete = await Item.findOneAndDelete({itemName,serialNumber,companyName})
 
         try {
             await data.save()
@@ -105,18 +105,3 @@ module.exports.request_delete = async (req, res) => {
     }
 }
 
-module.exports.request_item = async (req, res) => {
-    const data = await new Item({
-        itemId: req.body.itemId,
-        serialNumber: req.body.serialNumber
-    })
-    console.log(data)
-    try {
-        await data.save()
-        response.successResponse(req,res,data)
-    }
-    catch (e) {
-        response.errorResponse(req, res, e)
-    }
-
-}

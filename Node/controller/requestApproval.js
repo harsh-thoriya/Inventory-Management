@@ -26,7 +26,7 @@ const requestApproval = async (req,res,next) => {
                 equippedQuantity : 1
             }
         })
-        console.log("stock item ",stockItem)
+        
         if(stockItem){
             let companyName = stockItem.companyName
             let item = await itemModel.findOneAndUpdate({itemName,companyName,employeeId:undefined},{
@@ -64,7 +64,7 @@ const requestApproval = async (req,res,next) => {
         }
         else{
     
-            response.errorResponse(req, res, "Item not available, wait till it becomes available", code = 500, e)
+            response.errorResponse(req, res, error = "none" , errorMessage = "Item not available, wait till it becomes available", code = 500)
     
         }
         

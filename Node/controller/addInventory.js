@@ -12,7 +12,6 @@ const addStock = async (req,res,next) => {
         var stockItem = await stockModel.find({$and :[{itemName},{companyName}]})
 
         if(stockItem.length>0){
-
             
             let itemId = stockItem[0]._doc.availableQuantity+stockItem[0]._doc.equippedQuantity+stockItem[0]._doc.garbageQuantity+1
             stockItem[0]._doc.availableQuantity = stockItem[0]._doc.availableQuantity + incomingQuantity
@@ -27,7 +26,7 @@ const addStock = async (req,res,next) => {
             let loopCount = stockItem[0]._doc.availableQuantity
                         
             for(let i=itemId;i<=loopCount;i++){
-                await new itemModel({itemId:i,itemName,companyName}).save()
+                await new itemModel({serialNumber:i,itemName,companyName}).save()
             }
             //let updateData = await itemModel.updateOne({itemName},{ $push: { items: { "$each": itemArray } } })
 
@@ -43,7 +42,7 @@ const addStock = async (req,res,next) => {
             }).save()
 
             for(let i=1;i<=incomingQuantity;i++){
-                await new itemModel({itemId:i,itemName,companyName}).save()
+                await new itemModel({serialNumber:i,itemName,companyName}).save()
             }
 
             //let item = await itemModel.find({itemName})
