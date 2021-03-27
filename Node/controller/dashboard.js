@@ -6,6 +6,7 @@ const response = require('../utils/responseFormat.js')
 const dashboard = async (req,res,next) => {
 
     const id = req.body.id
+    
     try{
     
         const stockData = await stockModel.find({})

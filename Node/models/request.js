@@ -3,8 +3,8 @@ const mongoose = require('mongoose')
 const reqSchema = new mongoose.Schema({
     employeeId: {
         type: mongoose.Schema.Types.ObjectId,
-        //required: true,
-        ref: "Employee" //modelname
+        required: true,
+        ref: 'employee'
     },
     itemName:{
         type: String,
@@ -16,39 +16,27 @@ const reqSchema = new mongoose.Schema({
     },
     requestTime : {
         type:Date,
-        
-        //required: true
+        required: true
     },
     requestCloseTime : {
         type:Date,
-       // required: true
+        default : undefined
     },
     status:{
         default:0,
-        //required: true,
         type:Number
     },
     serialNumber:{
         type: Number
     },
     hrId:{
-        type:mongoose.Schema.Types.ObjectId
+        type:mongoose.Schema.Types.ObjectId,
+        ref : 'employee'
     },
     companyName:{
         type:String
     },
-    itemObjectId:{
-        type:mongoose.Schema.Types.ObjectId
-    }
 })
-
-// userSchema.virtual('tasks', {
-//     ref: 'Task',
-//     localField: '_id',
-//     foreignField: 'owner'
-// })
-
-
 
 const Request = mongoose.model('request', reqSchema)
 

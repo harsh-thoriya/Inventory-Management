@@ -13,7 +13,7 @@ const requestHr = async (req,res,next) => {
         const hrId = req.body.employeeId
         const reason = req.body.reason
     
-        let itemId,requestCloseTime
+        let serialNumber,requestCloseTime
     
         const stockItem = await stockModel.findOneAndUpdate({
             itemName,
@@ -28,11 +28,9 @@ const requestHr = async (req,res,next) => {
     
         if(stockItem){
             let companyName = stockItem.companyName
-            let itemObjectId 
             let item = await itemModel.findOne({itemName,companyName,employeeId:undefined})
            
-            itemId = item.itemId
-            itemObjectId = item.itemObjectId
+            serialNumber = item.serialNumber
             item.employeeId = new ObjectId(hrId)
             item.issuedDate = requestCloseTime = Date.now()
             await item.save()
@@ -45,10 +43,9 @@ const requestHr = async (req,res,next) => {
                     requestTime:requestCloseTime,
                     requestCloseTime,
                     status:1,
-                    itemId,
+                    serialNumber,
                     hrId,
-                    companyName,
-                    itemObjectId
+                    companyName
                 }).save() 
     
                 const result = {
@@ -58,21 +55,23 @@ const requestHr = async (req,res,next) => {
                     requestTime:requestCloseTime,
                     requestCloseTime,
                     status:1,
-                    itemId,
+                    serialNumber,
                     hrId,
-                    companyName,
-                    itemObjectId
+                    companyName
                 }
+
                 successResponse(req,res,result,"Request Successfully Completed")
-            // return res.send({isError:false,})
+        
         }
         else{
+
             errorResponse(req,res,'',"Inventory empty for this request",400)
-            // return res.send("Item not available, wait till it becomes available")
     
         }
     } catch (error) {
+
         errorResponse(req,res,error)
+
     }
 
 }
@@ -81,7 +80,7 @@ const returnHr = async (req,res,next) => {
     try {
         const itemName = req.body.itemName
         const companyName = req.body.companyName
-        const itemId = req.body.itemId
+        const serialNumber = req.body.serialNumber
         const employeeId = req.body.employeeId
         const condition = req.body.condition
         const reason = req.body.reason
@@ -93,7 +92,7 @@ const returnHr = async (req,res,next) => {
                 }
             })
     
-            const itemUpdate = await itemModel.findOneAndUpdate({itemName,companyName,itemId},{
+            const itemUpdate = await itemModel.findOneAndUpdate({itemName,companyName,serialNumber},{
                 employeeId : undefined,
                 issuedDate : undefined
             })
@@ -105,11 +104,11 @@ const returnHr = async (req,res,next) => {
                 reason,
                 returnTime : Date.now(),
                 condition,
-                itemId
+                serialNumber
             }).save()
         
             successResponse(req,res,'Object is returned')
-            // return res.send({isError:false,result:"successfulll"})
+            
         }
         else{
             const stockUpdate = await stockModel.findOneAndUpdate({itemName,companyName},{
@@ -119,7 +118,7 @@ const returnHr = async (req,res,next) => {
                 }
             })
     
-            const itemDelete = await itemModel.findOneAndDelete({itemName,itemId,companyName})
+            const itemDelete = await itemModel.findOneAndDelete({itemName,serialNumber,companyName})
     
             console.log(itemDelete)
             
@@ -130,7 +129,7 @@ const returnHr = async (req,res,next) => {
                 reason,
                 returnTime : Date.now(),
                 condition,
-                itemId
+                serialNumber
             }).save()
             successResponse(req,res,itemDelete,'Successfully Item Deleted')
             // return res.send({isError:false,result:"successfully item deleted"})

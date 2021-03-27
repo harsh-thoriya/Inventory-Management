@@ -6,7 +6,7 @@ const response = require('../utils/responseFormat.js')
 
 const requestApproval = async (req,res,next) => {
 
-    console.log(req.body) //employeeId, itemName
+    console.log(req.body) 
     const itemName = req.body.itemName
     const hrId = req.body.employeeId
     const employeeId = req.body.employeeId
@@ -26,17 +26,15 @@ const requestApproval = async (req,res,next) => {
                 equippedQuantity : 1
             }
         })
-    
+        console.log("stock item ",stockItem)
         if(stockItem){
             let companyName = stockItem.companyName
-            let itemObjectId 
             let item = await itemModel.findOneAndUpdate({itemName,companyName,employeeId:undefined},{
                 employeeId : new ObjectId(employeeId),
                 issuedDate : Date.now()
             })
             requestCloseTime = Date.now()
-            serialNumber = itemArray.items[i].itemId
-            itemObjectId = itemArray.items[i]._id
+            serialNumber = item.serialNumber
            
             //for(let i=0;i<itemArray.items.length;i++){
             //    
@@ -59,11 +57,10 @@ const requestApproval = async (req,res,next) => {
                     status:1,
                     serialNumber,
                     hrId,
-                    companyName,
-                    itemObjectId
+                    companyName
                 }) 
     
-            response.successResponse(req, res, data = {serialNumber,requestCloseTime,itemName,companyName,itemObjectId})
+            response.successResponse(req, res, data = {serialNumber,requestCloseTime,itemName,companyName})
         }
         else{
     
@@ -76,8 +73,6 @@ const requestApproval = async (req,res,next) => {
         response.errorResponse(req, res, "error while request approval", code = 500, e)
 
     }
-
-    
 
 }
 
