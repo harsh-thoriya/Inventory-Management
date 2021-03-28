@@ -106,6 +106,11 @@ const returnHr = async (req,res,next) => {
                 condition,
                 serialNumber
             }).save()
+
+            await requestModel.findOneAndUpdate({itemName,companyName,serialNumber,serialNumber,status:1},
+                {
+                    status:3
+                })
         
             successResponse(req,res,'Object is returned')
             
@@ -131,6 +136,12 @@ const returnHr = async (req,res,next) => {
                 condition,
                 serialNumber
             }).save()
+            
+            await requestModel.findOneAndUpdate({itemName,companyName,serialNumber,serialNumber,status:1},
+                {
+                    status:3
+                })
+
             successResponse(req,res,itemDelete,'Successfully Item Deleted')
             // return res.send({isError:false,result:"successfully item deleted"})
         }

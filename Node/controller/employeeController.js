@@ -36,8 +36,14 @@ module.exports.return_post = async (req, res) => {
             employeeId : undefined,
             issuedDate : undefined
         })
+
+
         try {
             await data.save()
+            await Request.findOneAndUpdate({itemName,companyName,serialNumber,serialNumber,status:1},
+                {
+                    status:3
+                })
             //res.send({ data, stockUpdate, itemUpdate })
             response.successResponse(req,res,{data,stockUpdate,itemUpdate})
         }
@@ -54,9 +60,13 @@ module.exports.return_post = async (req, res) => {
         })
 
         const itemDelete = await Item.findOneAndDelete({itemName,serialNumber,companyName})
-
+        
         try {
             await data.save()
+            await Request.findOneAndUpdate({itemName,companyName,serialNumber,serialNumber,status:1},
+                {
+                    status:3
+                })
             response.successResponse(req,res,{data,stockUpdate,itemDelete})
         }
         catch (e) {
