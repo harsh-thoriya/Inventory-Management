@@ -10,7 +10,6 @@ const retSchema = new mongoose.Schema({
     itemName:{
         type: String,
         required:true
-       
     },
     companyName:{
         type: String,
