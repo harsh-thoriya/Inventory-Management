@@ -2,7 +2,7 @@ const itemModel = require('../models/item.js')
 const ObjectId = require('mongodb').ObjectID;
 const response = require('../utils/responseFormat.js')
 
-const getEquippedItems = (req,res,next) => {
+const getEquippedItems = async (req,res,next) => {
 
     try{
 

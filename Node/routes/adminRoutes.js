@@ -4,8 +4,8 @@ const addInventory = require('../controller/addInventory.js')
 const approval = require('../controller/requestApproval.js')
 const {requestHr, returnHr} = require('../controller/hrRequestReturn.js')
 const hrDashboard = require('../controller/dashboard.js')
-const getEquippedItems = require('../controller/equippedItems.js')
-const updateStock = require('../controller/updateStock.js')
+const {getEquippedItems} = require('../controller/equippedItems.js')
+const {updateStock} = require('../controller/updateStock.js')
 
 const router = new express.Router()
 
