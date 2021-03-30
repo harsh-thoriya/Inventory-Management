@@ -26,13 +26,12 @@ const updateStock = async (req,res,next) => {
             { itemName:updatedStock.itemName, companyName:updatedStock.companyName },
             { itemName, companyName }
          )
-         
+
         response.successResponse(req, res, data = {itemName,companyName})
         
     }
     catch(e){
 
-        console.log("inside else")
         response.errorResponse(req, res, e, "similar item name and company name may exist or try again in a while", code = 500)
 
     }

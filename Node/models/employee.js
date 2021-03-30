@@ -90,9 +90,9 @@ employeeSchema.methods.generateAuthToken = async function () {
 
     const encryptedToken = cryptr.encrypt(token);
 
-    employee.tokens = employee.tokens.concat({token : encryptedToken})
+    //employee.tokens = employee.tokens.concat({token : encryptedToken})
 
-    await employee.save();
+    //await employee.save();
 
     return encryptedToken;
    
