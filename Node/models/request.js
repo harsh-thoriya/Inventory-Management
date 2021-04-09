@@ -26,16 +26,14 @@ const reqSchema = new mongoose.Schema({
         default:0,
         type:Number
     },
-    serialNumber:{
-        type: Number
-    },
     hrId:{
         type:mongoose.Schema.Types.ObjectId,
         ref : 'employee'
     },
-    companyName:{
-        type:String
-    },
+    item :{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "item" 
+    }
 })
 
 const Request = mongoose.model('request', reqSchema)

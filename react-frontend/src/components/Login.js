@@ -3,13 +3,14 @@ import {useHistory} from 'react-router-dom'
 
 function Login(){
 
-    const history = useHistory(); 
+  const history = useHistory(); 
   const Event=(e)=>{
     e.preventDefault()
     let path = '/home';
-    // let path = '/dashboard'; 
+    //let path = '/dashboard'; 
     history.push(path)
   }
+
   return(<div className = "App-header">
   <h1 ><b>Login Page</b></h1> 
   <form>

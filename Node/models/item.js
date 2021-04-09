@@ -5,7 +5,8 @@ const schema = mongoose.Schema;
 const items = new schema({
     itemName : {
         type : String,
-        required : true
+        required : true,
+        index : true
     },
     employeeId : {
         type : mongoose.Schema.Types.ObjectId,
@@ -23,6 +24,10 @@ const items = new schema({
     companyName : {
         type : String,
         required : true
+    },
+    usable:{
+        type : String,
+        default : true
     }
 })
 

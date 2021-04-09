@@ -7,14 +7,6 @@ const retSchema = new mongoose.Schema({
         required: true,
         ref: "employee" 
     },
-    itemName:{
-        type: String,
-        required:true
-    },
-    companyName:{
-        type: String,
-        required: true
-    },
     reason:{
         type: String,
         required:true
@@ -27,9 +19,10 @@ const retSchema = new mongoose.Schema({
         type:Boolean,
         required: true
     },
-    serialNumber:{
-        type: Number,
-        required:true
+    item : {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "item" 
     }
 })
 

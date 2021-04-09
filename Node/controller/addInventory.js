@@ -5,12 +5,13 @@ const mongoose = require('mongoose')
 
 const addStock = async (req,res,next) => {
 
-    //const session = await itemModel.startSession();
-
     let stockData = req.body
     const itemName = req.body.itemName
     const companyName = req.body.companyName
     const incomingQuantity = req.body.incomingQuantity
+
+    const session = await mongoose.startSession();
+    //session.startTransaction();
 
     try{
         var stockItem = await stockModel.find({$and :[{itemName},{companyName}]})
