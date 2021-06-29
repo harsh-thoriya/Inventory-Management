@@ -9,7 +9,7 @@ const reqSchema = new mongoose.Schema({
     itemId: {
         type: mongoose.Schema.Types.ObjectId,
         //required: true,
-        ref: "Employee" //modelname
+        ref: "Item" //modelname
     },
     itemName: {
         type: String,

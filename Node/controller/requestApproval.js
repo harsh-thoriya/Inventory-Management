@@ -28,21 +28,27 @@ const requestApproval = async (req,res,next) => {
     if(stockItem){
         let companyName = stockItem.companyName
         let itemObjectId 
-        let itemArray = await itemModel.findOne({itemName,'items.companyName':companyName})
+        let item = await itemModel.findOneAndUpdate({itemName,companyName,employeeId:undefined},{
+            employeeId : new ObjectId(employeeId),
+            issuedDate : Date.now()
+        })
+        requestCloseTime = Date.now()
+        serialNumber = itemArray.items[i].itemId
+        itemObjectId = itemArray.items[i]._id
        
-        for(let i=0;i<itemArray.items.length;i++){
-            
-            if(!itemArray.items[i].employeeId){
-                itemArray.items[i].employeeId = new ObjectId(employeeId)
-                itemArray.items[i].issuedDate = requestCloseTime = Date.now()
-                serialNumber = itemArray.items[i].itemId
-                itemObjectId = itemArray.items[i]._id
-                break
-            }
-           
-        }
+        //for(let i=0;i<itemArray.items.length;i++){
+        //    
+        //    if(!itemArray.items[i].employeeId){
+        //        itemArray.items[i].employeeId = new ObjectId(employeeId)
+        //        itemArray.items[i].issuedDate = requestCloseTime = Date.now()
+        //        serialNumber = itemArray.items[i].itemId
+        //        itemObjectId = itemArray.items[i]._id
+        //        break
+        //    }
+        //   
+        //}
         
-        await itemArray.save()
+        //await itemArray.save()
 
         const updateRequest = await requestModel.findOneAndUpdate({
             _id:new ObjectId(requestObjectId)},

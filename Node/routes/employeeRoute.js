@@ -12,7 +12,7 @@ const Item = require('../models/item')
 router.post('/request', auth, employeeController.request_post)
 // router.get('/return', employeeController.request_get)
 router.post('/return', auth, employeeController.return_post)
-router.get('/request', auth, employeeController.request_get)
+router.get('/home', auth, employeeController.request_get)
 router.delete('/request', auth, employeeController.request_delete)
 
 module.exports = router
